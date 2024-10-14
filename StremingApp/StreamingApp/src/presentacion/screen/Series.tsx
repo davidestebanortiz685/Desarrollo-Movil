@@ -11,12 +11,13 @@ export default function SeriesScreen() {
   const [idiomaId, setIdiomaId] = useState('');
   const [directorId, setDirectorId] = useState('');
   const [plataformaId, setPlataformaId] = useState('');
+  const [generoId, setGeneroId] = useState('');
   const [editingSerie, setEditingSerie] = useState(null);
-
   const [actores, setActores] = useState([]);
   const [idiomas, setIdiomas] = useState([]);
   const [directores, setDirectores] = useState([]);
   const [plataformas, setPlataformas] = useState([]);
+  const [generos, setGeneros] = useState([]);
 
   useEffect(() => {
     fetchSeries();
@@ -24,12 +25,13 @@ export default function SeriesScreen() {
     fetchIdiomas();
     fetchDirectores();
     fetchPlataformas();
+    fetchGeneros();
   }, []);
 
   const fetchSeries = async () => {
     const { data, error } = await supabase
       .from('series')
-      .select(`*, actores(nombre), idiomas(nombre), directores(nombre), plataformas(nombre)`);
+      .select(`*, actores(nombre), idiomas(nombre), directores(nombre), plataformas(nombre), generos(nombre)`);
     if (error) {
       console.error('Error fetching series:', error);
     } else {
@@ -73,15 +75,23 @@ export default function SeriesScreen() {
     }
   };
 
+  const fetchGeneros = async () => {
+    const { data, error } = await supabase.from('generos').select('id_genero, nombre');
+    if (error) {
+      console.error('Error fetching generos:', error);
+    } else {
+      setGeneros(data);
+    }
+  };
+
   const addSerie = async () => {
     const { data, error } = await supabase.from('series').insert([
-      { titulo, año, actor_id: actorId, idioma_id: idiomaId, director_id: directorId, plataforma_id: plataformaId }
+      { titulo, año, actor_id: actorId, idioma_id: idiomaId, director_id: directorId, plataforma_id: plataformaId, genero_id: generoId }
     ]);
     if (error) {
       console.error('Error adding serie:', error);
     } else {
-      //setSeries([...series, ...data]);
-      fetchPlataformas();
+      fetchSeries();
       clearForm();
     }
   };
@@ -93,6 +103,7 @@ export default function SeriesScreen() {
     setIdiomaId('');
     setDirectorId('');
     setPlataformaId('');
+    setGeneroId('');
     setEditingSerie(null);
   };
 
@@ -112,6 +123,7 @@ export default function SeriesScreen() {
     setIdiomaId(serie.idioma_id.toString());
     setDirectorId(serie.director_id.toString());
     setPlataformaId(serie.plataforma_id.toString());
+    setGeneroId(serie.genero_id.toString());
     setEditingSerie(serie);
   };
 
@@ -125,7 +137,8 @@ export default function SeriesScreen() {
           actor_id: actorId,
           idioma_id: idiomaId,
           director_id: directorId,
-          plataforma_id: plataformaId
+          plataforma_id: plataformaId,
+          genero_id: generoId
         })
         .eq('id_serie', editingSerie.id_serie);
 
@@ -141,7 +154,6 @@ export default function SeriesScreen() {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Series Disponibles</Text>
-
       {series.map((item) => (
         <View key={item.id_serie} style={styles.item}>
           <Text style={styles.itemTitle}>{item.titulo}</Text>
@@ -150,6 +162,7 @@ export default function SeriesScreen() {
           <Text style={styles.itemDetail}>Idioma: {item.idiomas ? item.idiomas.nombre : 'No asignado'}</Text>
           <Text style={styles.itemDetail}>Director: {item.directores ? item.directores.nombre : 'No asignado'}</Text>
           <Text style={styles.itemDetail}>Plataforma: {item.plataformas ? item.plataformas.nombre : 'No asignado'}</Text>
+          <Text style={styles.itemDetail}>Género: {item.generos ? item.generos.nombre : 'No asignado'}</Text>
           <View style={styles.buttonContainer}>
             <Button title="Eliminar" color="#FF6347" onPress={() => deleteSerie(item.id_serie)} />
             <Button title="Editar" color="#4682B4" onPress={() => loadSerieForEditing(item)} />
@@ -166,11 +179,10 @@ export default function SeriesScreen() {
         />
         <TextInput
           style={styles.input}
-          placeholder="Año (YYYY-MM-DD)"
+          placeholder="Año (YYYY)"
           value={año}
           onChangeText={setAño}
         />
-
         <Picker
           selectedValue={actorId}
           onValueChange={(itemValue) => setActorId(itemValue)}
@@ -215,11 +227,18 @@ export default function SeriesScreen() {
           ))}
         </Picker>
 
-        <Button
-          title={editingSerie ? "Guardar Cambios" : "Añadir Serie"}
-          onPress={editingSerie ? saveSerie : addSerie}
-          color="#4682B4"
-        />
+        <Picker
+          selectedValue={generoId}
+          onValueChange={(itemValue) => setGeneroId(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Seleccione Género" value="" />
+          {generos.map((genero) => (
+            <Picker.Item key={genero.id_genero} label={genero.nombre} value={genero.id_genero.toString()} />
+          ))}
+        </Picker>
+
+        <Button title={editingSerie ? "Actualizar Serie" : "Agregar Serie"} onPress={editingSerie ? saveSerie : addSerie} />
       </View>
     </ScrollView>
   );
@@ -229,34 +248,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: 'center',
-    color: '#333',
   },
   item: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 8,
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-    marginBottom: 15,
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
   },
   itemTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 5,
   },
   itemDetail: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 14,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -265,28 +278,17 @@ const styles = StyleSheet.create({
   },
   form: {
     marginTop: 20,
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
   },
   input: {
     height: 40,
-    borderColor: '#ccc',
+    borderColor: 'gray',
     borderWidth: 1,
-    borderRadius: 4,
     marginBottom: 10,
-    paddingHorizontal: 10,
-    backgroundColor: '#fafafa',
+    padding: 10,
   },
   picker: {
     height: 50,
+    width: '100%',
     marginBottom: 10,
-    backgroundColor: '#fafafa',
-    borderRadius: 4,
   },
 });

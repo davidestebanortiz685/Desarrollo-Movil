@@ -12,6 +12,7 @@ export default function HomeScreen({ navigation }) {
           onPress={() => navigation.navigate('Actores')}
         />
       </View>
+
       <View style={styles.buttonContainer}>
         <Button
           title="Directores"
@@ -38,6 +39,28 @@ export default function HomeScreen({ navigation }) {
           title="Series"
           color="#FD1515"
           onPress={() => navigation.navigate('Series')}
+        />
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Login"
+          color="#7DDA58"
+          onPress={() => navigation.navigate('Login')}
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="SignUp"
+          color="#060270"
+          onPress={() => navigation.navigate('SignUp')}
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Profile"
+          color="#CECECE"
+          onPress={() => navigation.navigate('Profile')}
         />
       </View>
     </View>
