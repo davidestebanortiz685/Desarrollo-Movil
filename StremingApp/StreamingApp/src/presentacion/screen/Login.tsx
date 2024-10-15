@@ -17,7 +17,7 @@ export default function Login({ navigation }) {
       console.error(error.message);
     } else {
       // Navegar a la pantalla de perfil o home
-      navigation.navigate('Profile');
+      navigation.navigate('Home');
     }
   };
 

@@ -1,68 +1,62 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome'; // Importamos los íconos
+import { supabase } from '../../../lib/supabse'; // Asegúrate de que la ruta sea correcta
 
 export default function HomeScreen({ navigation }) {
+  // Función para cerrar sesión
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error cerrando sesión:', error);
+    } else {
+      navigation.navigate('Login'); // Redirige a la pantalla de inicio de sesión
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome Home</Text>
+
       <View style={styles.buttonContainer}>
-        <Button
-          title="Actores"
-          color="#f194ff"
-          onPress={() => navigation.navigate('Actores')}
-        />
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Actores')}>
+          <Text style={styles.buttonText}>Actores</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button
-          title="Directores"
-          color="#4CAF50"
-          onPress={() => navigation.navigate('Directores')}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Plataformas"
-          color="#2196F3"
-          onPress={() => navigation.navigate('Plataformas')}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Idiomas"
-          color="#FF5722"
-          onPress={() => navigation.navigate('Idiomas')}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Series"
-          color="#FD1515"
-          onPress={() => navigation.navigate('Series')}
-        />
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Directores')}>
+          <Text style={styles.buttonText}>Directores</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button
-          title="Login"
-          color="#7DDA58"
-          onPress={() => navigation.navigate('Login')}
-        />
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Plataformas')}>
+          <Text style={styles.buttonText}>Plataformas</Text>
+        </TouchableOpacity>
       </View>
+
       <View style={styles.buttonContainer}>
-        <Button
-          title="SignUp"
-          color="#060270"
-          onPress={() => navigation.navigate('SignUp')}
-        />
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Idiomas')}>
+          <Text style={styles.buttonText}>Idiomas</Text>
+        </TouchableOpacity>
       </View>
+
       <View style={styles.buttonContainer}>
-        <Button
-          title="Profile"
-          color="#CECECE"
-          onPress={() => navigation.navigate('Profile')}
-        />
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Series')}>
+          <Text style={styles.buttonText}>Series</Text>
+        </TouchableOpacity>
       </View>
+
+      {/* Botón de Perfil con ícono en la esquina superior derecha */}
+      <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Profile')}>
+        <Icon name="user" size={30} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Botón de Cerrar sesión con ícono en la esquina superior izquierda */}
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Icon name="sign-out" size={30} color="#fff" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -70,7 +64,6 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f0f0f0',
     padding: 20,
@@ -80,9 +73,39 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#333',
+    textAlign: 'center',
   },
   buttonContainer: {
     marginVertical: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 5,
     width: '80%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  profileButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    backgroundColor: '#4CAF50',
+    borderRadius: 50,
+    padding: 10,
+  },
+  logoutButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    backgroundColor: '#FF5722',
+    borderRadius: 50,
+    padding: 10,
   },
 });

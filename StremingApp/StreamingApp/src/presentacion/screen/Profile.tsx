@@ -1,48 +1,64 @@
-import { supabase } from '../../../lib/supabse';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { supabase } from '../../../lib/supabse';
 
-export default function Profile({ navigation }) {
-  const [user, setUser] = useState(null);
+export default function Profile() {
+  const [usuario, setUsuario] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error('Error fetching session:', error);
-      } else if (session) {
-        setUser(session.user);
-      }
-    };
-
-    fetchSession();
+    obtenerUsuario();
   }, []);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigation.navigate('Login');
-  };
+  const obtenerUsuario = async () => {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-  if (!user) return <Text>Cargando...</Text>;
+    if (userError) {
+      console.error('Error obteniendo el usuario:', userError);
+      setError("Hubo un error al obtener el usuario.");
+      return;
+    }
+
+    if (user) {
+      console.log('User ID:', user.id); // Verifica el ID del usuario
+
+      const { data, error: userDataError } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('id_usuario', user.id) // Asegúrate que el ID sea correcto
+        .single(); // Obtener solo un usuario
+
+      if (userDataError) {
+        console.error('Error obteniendo datos del usuario:', userDataError);
+        setError("Hubo un error al obtener los datos del usuario.");
+      } else if (!data) {
+        console.error("No se encontró el usuario en la base de datos."); // Log adicional
+        setError("No se encontró el usuario.");
+      } else {
+        setUsuario(data);
+      }
+    } else {
+      setError("Usuario no autenticado.");
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Perfil</Text>
-      <Text>Email: {user.email}</Text>
-      <Button title="Cerrar Sesión" onPress={handleLogout} />
+      {error && <Text style={styles.error}>{error}</Text>}
+      {usuario ? (
+        <>
+          <Text>Nombre: {usuario.nombre}</Text>
+          <Text>Email: {usuario.email}</Text>
+          {/* Muestra otros datos del usuario aquí */}
+        </>
+      ) : (
+        <Text>Cargando...</Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    fontWeight: 'bold',
-  },
+  container: { padding: 20 },
+  error: { color: 'red' },
 });

@@ -11,13 +11,14 @@ import Series from './src/presentacion/screen/Series';
 import Login from './src/presentacion/screen/Login';
 import SignUp from './src/presentacion/screen/SignUp';
 import Profile from './src/presentacion/screen/Profile';  // Pantalla de perfil de usuario
+import InicioScreen from './src/presentacion/screen/Inicio';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="InicioScreen">
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Actores" component={Actores} />
         <Stack.Screen name="Directores" component={Directores} />
@@ -28,6 +29,7 @@ export default function App() {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="InicioScreen" component={InicioScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

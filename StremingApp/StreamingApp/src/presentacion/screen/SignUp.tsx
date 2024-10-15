@@ -18,8 +18,8 @@ export default function SignUp() {
   
       // Intenta registrar el usuario con Supabase
       const { user, error } = await supabase.auth.signUp({
-        email :'davido@gmail.com',
-        password :'osovanidoso',
+        email,
+        password,
       });
   
       // Si hay un error, mostrar el mensaje
@@ -31,10 +31,24 @@ export default function SignUp() {
       // Si el registro es exitoso, mostrar el mensaje de éxito
       setSuccessMessage('Usuario registrado correctamente');
       setErrorMessage('');
+  
+      // Si el usuario se registró correctamente, guarda en la tabla 'usuarios'
+      const { data, error: insertError } = await supabase
+        .from('usuarios')
+        .insert([{ email, contraseña: password }]);  // Asegúrate de hashear la contraseña antes de insertarla
+  
+      if (insertError) {
+        console.error('Error al insertar en la tabla usuarios:', insertError);
+      }
+  
     } catch (error) {
       setErrorMessage('Error al registrar el usuario: ' + error.message);
     }
   };
+  
+  
+  
+  
   
 
   return (
