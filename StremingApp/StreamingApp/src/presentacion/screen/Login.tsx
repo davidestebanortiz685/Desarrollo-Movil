@@ -16,8 +16,47 @@ export default function Login({ navigation }) {
       setError('Error al iniciar sesión. Verifica tus credenciales.');
       console.error(error.message);
     } else {
+      // Sincronizar usuario con la base de datos
+      await sincronizarUsuarios(email);
+      
       // Navegar a la pantalla de perfil o home
       navigation.navigate('Home');
+    }
+  };
+
+  const sincronizarUsuarios = async (email) => {
+    // Obtener los datos del usuario autenticado
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      console.error('Error obteniendo el usuario autenticado:', authError);
+      return;
+    }
+
+    // Verificar si el usuario ya está en la tabla 'usuarios'
+    const { data: usuarioData, error: userFetchError } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (!usuarioData) {
+      // Si no está, lo agregamos a la tabla 'usuarios'
+      const { error: insertError } = await supabase
+        .from('usuarios')
+        .insert({
+          email: email,
+          nombre: user.user_metadata.full_name || 'Sin nombre',
+          fecha_registro: new Date(),
+        });
+
+      if (insertError) {
+        console.error('Error al insertar el usuario en la base de datos:', insertError.message);
+      } else {
+        console.log('Usuario sincronizado con éxito en la tabla usuarios.');
+      }
+    } else {
+      console.log('El usuario ya está registrado en la base de datos.');
     }
   };
 

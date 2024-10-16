@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Picker, StyleSheet, FlatList, Text, Alert } from 'react-native';
+import { View, TextInput, Button,  StyleSheet, FlatList, Text, Alert } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { supabase } from '../../../lib/supabse';
 
 export default function SeriesCrud() {

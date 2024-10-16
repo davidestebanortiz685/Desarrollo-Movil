@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Button, StyleSheet, Text } from 'react-native';
 import SeriesCrud from './SeriesCrud';
 import SeriesList from './SeriesList';
-import SeriesActions from './SeriesActions';
+import Favoritas from './Favoritas';  
+import Resena from './Resena';  
 
 export default function Series() {
   const [selectedSection, setSelectedSection] = useState(null);
@@ -12,7 +13,8 @@ export default function Series() {
       <View style={styles.navContainer}>
         <Button title="CRUD de Series" onPress={() => setSelectedSection('crud')} />
         <Button title="Ver Series" onPress={() => setSelectedSection('list')} />
-        <Button title="Acciones de Series" onPress={() => setSelectedSection('actions')} />
+        <Button title="Series Favoritas" onPress={() => setSelectedSection('favoritas')} />
+        <Button title="Reseña" onPress={() => setSelectedSection('resena')} />
       </View>
 
       <View style={styles.contentContainer}>
@@ -21,7 +23,8 @@ export default function Series() {
         )}
         {selectedSection === 'crud' && <SeriesCrud />}
         {selectedSection === 'list' && <SeriesList />}
-        {selectedSection === 'actions' && <SeriesActions />}
+        {selectedSection === 'favoritas' && <Favoritas />}  
+        {selectedSection === 'resena' && <Resena />}        
       </View>
     </View>
   );

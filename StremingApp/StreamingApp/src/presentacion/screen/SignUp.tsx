@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import { supabase } from '../../../lib/supabse'; // Asegúrate de tener Supabase correctamente configurado en lib/supabase.js
+import bcrypt from 'react-native-bcrypt'; // Instala bcrypt para manejar el hash de la contraseña
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -10,35 +11,46 @@ export default function SignUp() {
 
   const addUsuario = async () => {
     try {
-      // Asegúrate de que el email tenga un formato válido
+      // Validar el formato del correo electrónico
       if (!email.includes('@')) {
         setErrorMessage('Por favor, ingrese un correo electrónico válido.');
         return;
       }
   
-      // Intenta registrar el usuario con Supabase
-      const { user, error } = await supabase.auth.signUp({
+      // Validar longitud mínima de la contraseña
+      if (password.length < 6) {
+        setErrorMessage('La contraseña debe tener al menos 6 caracteres.');
+        return;
+      }
+  
+      // Intentar registrar el usuario con Supabase
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
   
-      // Si hay un error, mostrar el mensaje
+      // Mostrar el error si ocurrió alguno durante el registro
       if (error) {
         setErrorMessage(error.message);
         return;
       }
   
-      // Si el registro es exitoso, mostrar el mensaje de éxito
+      // Mostrar mensaje de éxito
       setSuccessMessage('Usuario registrado correctamente');
       setErrorMessage('');
   
-      // Si el usuario se registró correctamente, guarda en la tabla 'usuarios'
-      const { data, error: insertError } = await supabase
+      // Hashear la contraseña antes de almacenarla en la base de datos
+      const salt = bcrypt.genSaltSync(10); // Generar un salt con bcrypt
+      const hashedPassword = bcrypt.hashSync(password, salt); // Hashear la contraseña
+  
+      // Guardar el usuario en la tabla 'usuarios'
+      const { error: insertError } = await supabase
         .from('usuarios')
-        .insert([{ email, contraseña: password }]);  // Asegúrate de hashear la contraseña antes de insertarla
+        .insert([{ email, contraseña: hashedPassword, fecha_registro: new Date() }]);
   
       if (insertError) {
         console.error('Error al insertar en la tabla usuarios:', insertError);
+        setErrorMessage('Error al guardar los datos en la base de usuarios.');
       }
   
     } catch (error) {
@@ -46,14 +58,10 @@ export default function SignUp() {
     }
   };
   
-  
-  
-  
-  
 
   return (
     <View style={styles.container}>
-      <Text>Registro de Usuario</Text>
+      <Text style={styles.title}>Registro de Usuario</Text>
       {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
       {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
 
@@ -79,6 +87,13 @@ export default function SignUp() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    justifyContent: 'center',
+    flex: 1,
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    fontWeight: 'bold',
   },
   input: {
     height: 40,
