@@ -184,35 +184,50 @@ export default function SeriesCrud() {
       />
 
       {/* Selectores para actores, idiomas, directores, plataformas y géneros */}
-      <Picker selectedValue={actorId} onValueChange={setActorId}>
+      <Picker selectedValue={actorId} 
+              onValueChange={setActorId}
+              style={styles.picker}
+              >
         <Picker.Item label="Seleccione un actor" value={null} />
         {actores.map((actor) => (
           <Picker.Item key={actor.id_actor} label={`${actor.nombre} ${actor.apellido}`} value={actor.id_actor} />
         ))}
       </Picker>
 
-      <Picker selectedValue={idiomaId} onValueChange={setIdiomaId}>
+      <Picker selectedValue={idiomaId} 
+              onValueChange={setIdiomaId}
+              style={styles.picker}
+              >
         <Picker.Item label="Seleccione un idioma" value={null} />
         {idiomas.map((idioma) => (
           <Picker.Item key={idioma.id_idioma} label={idioma.nombre} value={idioma.id_idioma} />
         ))}
       </Picker>
 
-      <Picker selectedValue={directorId} onValueChange={setDirectorId}>
+      <Picker selectedValue={directorId} 
+              onValueChange={setDirectorId}
+              style={styles.picker}
+              >
         <Picker.Item label="Seleccione un director" value={null} />
         {directores.map((director) => (
           <Picker.Item key={director.id_director} label={`${director.nombre} ${director.apellido}`} value={director.id_director} />
         ))}
       </Picker>
 
-      <Picker selectedValue={plataformaId} onValueChange={setPlataformaId}>
+      <Picker selectedValue={plataformaId} 
+              onValueChange={setPlataformaId}
+              style={styles.picker}
+              >
         <Picker.Item label="Seleccione una plataforma" value={null} />
         {plataformas.map((plataforma) => (
           <Picker.Item key={plataforma.id_plataforma} label={plataforma.nombre} value={plataforma.id_plataforma} />
         ))}
       </Picker>
 
-      <Picker selectedValue={generoId} onValueChange={setGeneroId}>
+      <Picker selectedValue={generoId} 
+              onValueChange={setGeneroId}
+              style={styles.picker}
+              >
         <Picker.Item label="Seleccione un género" value={null} />
         {generos.map((genero) => (
           <Picker.Item key={genero.id_genero} label={genero.nombre} value={genero.id_genero} />
@@ -247,6 +262,9 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     marginVertical: 10,
     padding: 10,
+  },
+  picker: {
+    marginVertical: 10,
   },
   serieItem: {
     flexDirection: 'row',

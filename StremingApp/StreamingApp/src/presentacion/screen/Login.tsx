@@ -10,18 +10,16 @@ export default function Login({ navigation }) {
 
   const handleLogin = async () => {
     setError('');
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
+    if (loginError) {
       setError('Error al iniciar sesión. Verifica tus credenciales.');
-      console.error(error.message);
-    } else {
-      // Sincronizar usuario con la base de datos
-      await sincronizarUsuarios(email);
-      
-      // Navegar a la pantalla de perfil o home
-      navigation.navigate('Home');
+      console.error(loginError.message);
+      return; // Termina la función si hay error en el login
     }
+
+    // Sincronizar usuario con la base de datos
+    await sincronizarUsuarios(email);
   };
 
   const sincronizarUsuarios = async (email) => {
@@ -36,27 +34,32 @@ export default function Login({ navigation }) {
     // Verificar si el usuario ya está en la tabla 'usuarios'
     const { data: usuarioData, error: userFetchError } = await supabase
       .from('usuarios')
-      .select('*')
+      .select('*, tipo_usuario(nombre_tipo)')
       .eq('email', email)
       .single();
 
-    if (!usuarioData) {
-      // Si no está, lo agregamos a la tabla 'usuarios'
-      const { error: insertError } = await supabase
-        .from('usuarios')
-        .insert({
-          email: email,
-          nombre: user.user_metadata.full_name || 'Sin nombre',
-          fecha_registro: new Date(),
-        });
+    if (userFetchError) {
+      console.error('Error al buscar usuario en la base de datos:', userFetchError.message);
+      return;
+    }
 
-      if (insertError) {
-        console.error('Error al insertar el usuario en la base de datos:', insertError.message);
-      } else {
-        console.log('Usuario sincronizado con éxito en la tabla usuarios.');
-      }
+    if (!usuarioData) {
+      setError('No tienes permiso para iniciar sesión.');
+      console.error('El usuario no existe en la base de datos.');
+      return;
+    }
+
+    // Verificar tipo de usuario
+    const tipoUsuario = usuarioData.tipo_usuario?.nombre_tipo;
+    if (tipoUsuario === 'administrador') {
+      console.log('Usuario autorizado con rol: Administrador');
+      navigation.navigate('Home'); // Navegar a la pantalla Home para administradores
+    } else if (tipoUsuario === 'cliente') {
+      console.log('Usuario autorizado con rol: Cliente');
+      navigation.navigate('HomeCliente'); // Navegar a la pantalla HomeCliente para clientes
     } else {
-      console.log('El usuario ya está registrado en la base de datos.');
+      setError('No tienes permiso para iniciar sesión.');
+      console.warn('Tipo de usuario no autorizado:', tipoUsuario);
     }
   };
 

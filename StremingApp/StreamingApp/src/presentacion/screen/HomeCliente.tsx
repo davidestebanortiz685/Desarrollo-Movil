@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Importamos los íconos
-import { supabase } from '../../../lib/supabse'; // Asegúrate de que la ruta sea correcta
+import Icon from 'react-native-vector-icons/FontAwesome'; 
+import { supabase } from '../../../lib/supabse'; 
 
 export default function HomeScreen({ navigation }) {
   // Función para cerrar sesión
@@ -10,7 +10,7 @@ export default function HomeScreen({ navigation }) {
     if (error) {
       console.error('Error cerrando sesión:', error);
     } else {
-      navigation.navigate('Login'); // Redirige a la pantalla de inicio de sesión
+      navigation.navigate('Login'); 
     }
   };
 
@@ -19,49 +19,47 @@ export default function HomeScreen({ navigation }) {
       <Text style={styles.title}>Welcome Home</Text>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Actores')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ActoresCliente')}>
           <Text style={styles.buttonText}>Actores</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Directores')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('DirectoresCliente')}>
           <Text style={styles.buttonText}>Directores</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Plataformas')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('PlataformaCliente')}>
           <Text style={styles.buttonText}>Plataformas</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Idiomas')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('IdiomasCliente')}>
           <Text style={styles.buttonText}>Idiomas</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Series')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SeriesCliente')}>
           <Text style={styles.buttonText}>Series</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Botón de Perfil con ícono en la esquina superior derecha */}
-      <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Profile')}>
-        <Icon name="user" size={30} color="#fff" />
-      </TouchableOpacity>
-
-      {/* Botón de Cerrar sesión con ícono en la esquina superior izquierda */}
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Icon name="sign-out" size={30} color="#fff" />
-      </TouchableOpacity>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Pelis De Una API')}>
           <Text style={styles.buttonText}>Pelis de la Api</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Profile')}>
+        <Icon name="user" size={30} color="#fff" />
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Icon name="sign-out" size={30} color="#fff" />
+      </TouchableOpacity>
     </View>
   );
 }

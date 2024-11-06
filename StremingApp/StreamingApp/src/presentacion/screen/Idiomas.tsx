@@ -12,7 +12,6 @@ export default function IdiomasScreen() {
     fetchIdiomas();
   }, []);
 
-  // Obtener los idiomas
   const fetchIdiomas = async () => {
     const { data, error } = await supabase.from('idiomas').select('*');
     if (error) {

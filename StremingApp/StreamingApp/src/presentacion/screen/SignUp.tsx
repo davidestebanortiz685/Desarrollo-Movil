@@ -1,52 +1,49 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
-import { supabase } from '../../../lib/supabse'; // Asegúrate de tener Supabase correctamente configurado en lib/supabase.js
-import bcrypt from 'react-native-bcrypt'; // Instala bcrypt para manejar el hash de la contraseña
+import { Picker } from '@react-native-picker/picker';
+import { supabase } from '../../../lib/supabse';
+import bcrypt from 'react-native-bcrypt';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [tipoUsuario, setTipoUsuario] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
   const addUsuario = async () => {
     try {
-      // Validar el formato del correo electrónico
       if (!email.includes('@')) {
         setErrorMessage('Por favor, ingrese un correo electrónico válido.');
         return;
       }
   
-      // Validar longitud mínima de la contraseña
       if (password.length < 6) {
         setErrorMessage('La contraseña debe tener al menos 6 caracteres.');
         return;
       }
   
-      // Intentar registrar el usuario con Supabase
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
   
-      // Mostrar el error si ocurrió alguno durante el registro
       if (error) {
         setErrorMessage(error.message);
         return;
       }
   
-      // Mostrar mensaje de éxito
       setSuccessMessage('Usuario registrado correctamente');
       setErrorMessage('');
   
-      // Hashear la contraseña antes de almacenarla en la base de datos
-      const salt = bcrypt.genSaltSync(10); // Generar un salt con bcrypt
-      const hashedPassword = bcrypt.hashSync(password, salt); // Hashear la contraseña
-  
-      // Guardar el usuario en la tabla 'usuarios'
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(password, salt);
+
+      const tipoUsuarioValue = tipoUsuario === "administrador" ? 1 : tipoUsuario === "cliente" ? 2 : null;
+
       const { error: insertError } = await supabase
         .from('usuarios')
-        .insert([{ email, contraseña: hashedPassword, fecha_registro: new Date() }]);
+        .insert([{ email, contraseña: hashedPassword, fecha_registro: new Date(), tipo_usuario: tipoUsuarioValue }]);
   
       if (insertError) {
         console.error('Error al insertar en la tabla usuarios:', insertError);
@@ -57,7 +54,6 @@ export default function SignUp() {
       setErrorMessage('Error al registrar el usuario: ' + error.message);
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -79,6 +75,16 @@ export default function SignUp() {
         onChangeText={setPassword}
         secureTextEntry
       />
+      
+      <Picker
+        selectedValue={tipoUsuario}
+        style={styles.input}
+        onValueChange={(itemValue) => setTipoUsuario(itemValue)}
+      >
+        <Picker.Item label="Seleccione tipo de usuario" value="" />
+        <Picker.Item label="Cliente" value="cliente" />
+        <Picker.Item label="Administrador" value="administrador" />
+      </Picker>
       <Button title="Registrar" onPress={addUsuario} />
     </View>
   );

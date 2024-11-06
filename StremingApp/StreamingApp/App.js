@@ -12,6 +12,13 @@ import Login from './src/presentacion/screen/Login';
 import SignUp from './src/presentacion/screen/SignUp';
 import Profile from './src/presentacion/screen/Profile';  // Pantalla de perfil de usuario
 import InicioScreen from './src/presentacion/screen/Inicio';
+import buscar_peli from './src/presentacion/screen/buscar_peli';
+import HomeCliente from './src/presentacion/screen/HomeCliente';
+import ActoresCliente from './src/presentacion/screen/ActoresCliente';
+import DirectoresCliente from './src/presentacion/screen/DirectoresCliente';
+import IdiomasCliente from './src/presentacion/screen/IdiomasCliente';
+import PlataformaCliente from './src/presentacion/screen/PlataformaCliente';
+import SeriesCliente from './src/presentacion/screen/SeriesCliente';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,12 +32,21 @@ export default function App() {
         <Stack.Screen name="Idiomas" component={Idiomas} />
         <Stack.Screen name="Plataformas" component={Plataformas} />
         <Stack.Screen name="Series" component={Series} />
-        {/* Añadimos las pantallas de autenticación */}
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="InicioScreen" component={InicioScreen} />
+        <Stack.Screen name="Pelis De Una API" component={buscar_peli} />
+        <Stack.Screen name="HomeCliente" component={HomeCliente} />
+
+        <Stack.Screen name="ActoresCliente" component={ActoresCliente} />
+        <Stack.Screen name="DirectoresCliente" component={DirectoresCliente} />
+        <Stack.Screen name="IdiomasCliente" component={IdiomasCliente} />
+        <Stack.Screen name="PlataformaCliente" component={PlataformaCliente} />
+        <Stack.Screen name="SeriesCliente" component={SeriesCliente} />
+
       </Stack.Navigator>
     </NavigationContainer>
+    
   );
 }

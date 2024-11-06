@@ -38,13 +38,12 @@ export default function DirectoresScreen() {
     }
   };
 
-  // Limpiar el formulario
   const clearForm = () => {
     setNombre('');
     setApellido('');
     setNacionalidad('');
     setFecha('');
-    setEditingDirector(null); // Salir del modo de edición
+    setEditingDirector(null); 
   };
 
   // Eliminar un director
@@ -57,16 +56,15 @@ export default function DirectoresScreen() {
     }
   };
 
-  // Cargar un director para editar
+  //  editar
   const loadDirectorForEditing = (director) => {
     setNombre(director.nombre);
     setApellido(director.apellido);
     setNacionalidad(director.nacionalidad);
     setFecha(director.fecha);
-    setEditingDirector(director);  // Almacenar el director en edición
+    setEditingDirector(director);  
   };
 
-  // Guardar cambios (editar director)
   const saveDirector = async () => {
     if (editingDirector) {
       const { error } = await supabase
@@ -77,8 +75,8 @@ export default function DirectoresScreen() {
       if (error) {
         console.error('Error updating director:', error);
       } else {
-        fetchDirectores();  // Refrescar la lista de directores
-        clearForm(); // Limpiar el formulario y salir del modo edición
+        fetchDirectores();  // Refrescar la lista 
+        clearForm(); 
       }
     }
   };
